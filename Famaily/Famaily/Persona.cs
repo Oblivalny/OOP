@@ -10,90 +10,77 @@ namespace Famaily
 	{
 		public string Name { get; }
 
-		//private Persona Partner ;
-		//private List<Persona> Parents;
-		//private List<Persona> Brother_sister;
-		//private List<Persona> Grandparents;
-		//private List<Persona> Children;
-		//private List<Persona> Grandchildren;
-
-
-		public Persona Partner;
-		public Famaily Parents { get; }
-		public Famaily BrotherAndSister { get; }
-		public Famaily Grandparents { get; }
-		public Famaily Children { get; }
-		public Famaily Grandchildren { get; }
+		private Persona Partner;
+		private Famaily Parents;
+		private Famaily Children;
 
 		public Persona(string name)
 		{
 			Name = name;
 			Parents = new Famaily();
-			BrotherAndSister = new Famaily();
-			Grandparents = new Famaily();
 			Children = new Famaily();
-			Grandchildren = new Famaily();
 		}
 
+
+		// Установление связей родства
 		public void SetPartner(Persona partner)
 		{
-			NotChildren(partner);
+			CheckingNotSelfKinship(partner);
 
 			Partner = partner;
-			partner.Partner = this;
+            partner.Partner = this;
+            //partner.SetPartner(this);
 		}
 
 		public void SetParent(Persona parent)
 		{
-			ViolationOfFamilyTies(parent, "Parent");
-			
-			foreach (var grandparent in parent.Grandparents.Persona)
-			{
-				SetGrandparents(grandparent);
-			}
-			
-			foreach (var cildren in parent.Children.Persona)
-			{
-				SetBrotherAndSister(cildren);
-			}
-			//parent.SetChilren(this);
+			CheckingNotSelfKinship(parent);
+			CheckingViolationOfFamilyTiesUp(parent, this);
+
 			Parents.AddRelative(parent);
-			parent.Children.AddRelative(this);
-
-
+			parent.SetChilren(this);
 		}
 
 		public void SetChilren(Persona child)
 		{
-			ViolationOfFamilyTies(child, "Chilren");
+			CheckingNotSelfKinship(child);
+			CheckingViolationOfFamilyTiesUp(this, child);
 			Children.AddRelative(child);
-			child.Parents.AddRelative(this);
+			//child.Parents.AddRelative(this);
 		}
 
-	
-		public void SetBrotherAndSister(Persona partner)
+		// Проверка связей родства путем прохода по генеалогическому древу
+		private void CheckingViolationOfFamilyTiesUp(Persona parent, Persona child)
 		{
-			ViolationOfFamilyTies(partner, "BrotherAndSister");
-			BrotherAndSister.AddRelative(partner);
-			partner.BrotherAndSister.AddRelative(this);
 
+			if (CheckingВuplicates(parent.GetParent(), child))
+			{
+				throw new Exception($"Нарушение родственных связей, {child.Name} уже является родителем {parent.Name}");
+			}
+
+			foreach (var grandparent in parent.GetParent())
+			{
+				CheckingViolationOfFamilyTiesUp(grandparent, child);
+			}
+
+			CheckingViolationOfFamilyTiesDown(parent, child);
 		}
 
-		public void SetGrandparents(Persona gandparents)
+		private void CheckingViolationOfFamilyTiesDown(Persona parent, Persona child)
 		{
-			ViolationOfFamilyTies(gandparents, "Grandparents");
-			Grandparents.AddRelative(gandparents);
-			gandparents.Grandchildren.AddRelative(this);
+
+			if (CheckingВuplicates(parent.GetChildren(), child))
+			{
+				throw new Exception($"Нарушение родственных связей, {parent.Name} уже является родителем {child.Name}");
+			}
+
+			foreach (var brotherOrSister in parent.GetChildren())
+			{
+				CheckingViolationOfFamilyTiesDown(brotherOrSister, child);
+			}
 		}
 
-		public void SetGrandchildren(Persona grandchildren)
-		{
-			ViolationOfFamilyTies(grandchildren, "Grandchildren");
-			Grandchildren.AddRelative(grandchildren);
-			grandchildren.Grandparents.AddRelative(this);
-		}
-
-		private string ViewPersona(List<Persona> persons)
+		public string ViewPersona(List<Persona> persons)
 		{
 			var names = " ";
 
@@ -104,116 +91,131 @@ namespace Famaily
 			return names;
 		}
 
-		private List<Persona> AuntAndUncle()
+		// Получение персон определенного родства
+		public List<Persona> GetParent()
+        {
+			return this.Parents.GetPersona();
+        }
+
+		public List<Persona> GetChildren()
 		{
-
-			List<Persona> auntAndUncle = new List<Persona>();
-			foreach (var perent in this.Parents.Persona)
-			{
-				foreach (var person in perent.BrotherAndSister.Persona)
-				{
-					auntAndUncle.Add(person);
-				}
-
-			}
-
-			return auntAndUncle;
+			return this.Children.GetPersona();
 		}
 
-		public string ViewAuntAndUncle()
+		public Persona GetPartner()
 		{
-			return "Aunt and Uncle: " + ViewPersona(AuntAndUncle());
+			return this.Partner;
 		}
 
-		private List<Persona> Cousins()
+
+		public List<Persona> GetGrandparents()
 		{
-
-			List<Persona> cusins = new List<Persona>();
-			List<Persona> auntAndUncle = AuntAndUncle();
-
-			foreach (var person_anauntAndUncle in auntAndUncle)
+			List<Persona> grandparents = new List<Persona>();
+			foreach (var parent in this.GetParent())
 			{
-				foreach (var person_cusins in person_anauntAndUncle.Children.Persona)
+				foreach (var grandparent in parent.GetParent())
 				{
-					cusins.Add(person_cusins);
+					grandparents.Add(grandparent);
 				}
 			}
-
-			return cusins;
+			return grandparents;
 		}
-		public string ViewCousins()
+
+		public List<Persona> GetGrandchildren()
 		{
-			return "Cousins: " + ViewPersona(Cousins());
+			List<Persona> grandchildren = new List<Persona>();
+
+			foreach (var child in this.GetChildren())
+			{
+				foreach (var grandchild in child.GetChildren())
+				{
+					grandchildren.Add(grandchild);
+				}
+			}
+
+			return grandchildren;
 		}
 
-
-		private void ViolationOfFamilyTies(Persona person,  string familyTies)
+		public List<Persona> GetBrotherAndSister()
 		{
-			if (familyTies!= "Parent") {
-				NotParent(person);
-			}
-			if (familyTies != "Grandchildren")
+			List<Persona> brotherAndSister = new List<Persona>();
+
+			if (this.GetParent().Count() >0)
 			{
-				NotGrandchildren(person);
+				foreach (var child in this.GetParent().First().GetChildren())
+				{
+					if (child != this)
+					{
+						brotherAndSister.Add(child);
+					}
+
+				}
 			}
-			if (familyTies != "Grandparent")
-			{
-				NotGrandparent(person);
-			}
-			if (familyTies != "BrotherAndSister")
-			{
-				NotBrotherAndSister(person);
-			}
-			if (familyTies != "Childrenr")
-			{
-				NotChildren(person);
-			}
-			if (familyTies != "Childrenr")
-			{
-				NotChildren(person);
-			}
+
+			return brotherAndSister;
 		}
-		private void NotParent(Persona person)
+
+		public List<Persona> GetAuntAndUncle()
+        {
+
+            List<Persona> auntAndUncles = new List<Persona>();
+
+
+            foreach (var grentperent in this.GetGrandparents())
+            {
+               
+                foreach (var auntAndUncle in grentperent.GetChildren())
+                {
+					if ((CheckingВuplicates(this.GetParent(), auntAndUncle) == false) 
+						&(CheckingВuplicates(auntAndUncles, auntAndUncle) == false))
+
+					{
+						auntAndUncles.Add(auntAndUncle);
+						auntAndUncles.Add(auntAndUncle.GetPartner());
+					}
+                }
+            }
+
+            return auntAndUncles;
+		}
+
+
+		public List<Persona> GetCousins()
+		{
+			List<Persona> cousins = new List<Persona>();
+
+
+			foreach (var auntAndUncle in this.GetAuntAndUncle())
+			{
+
+				foreach (var child in auntAndUncle.GetChildren())
+				{
+					if (CheckingВuplicates(cousins, child) == false)
+					{
+						cousins.Add(child);
+					}
+				}
+			}
+
+			return cousins;
+		}
+
+
+		public List<Persona> GetLaws()
+        {
+			return this.GetPartner().GetParent();
+		}
+
+
+		private void CheckingNotSelfKinship(Persona person)
 		{
 
-			if (CheckingВuplicates(Parents.Persona, person))
+			if (person == this)
 			{
-				throw new Exception($"Нарушение родственных связей, {person.Name} уже является родителем");
+				throw new Exception($"Нарушение родственных связей, {person.Name} не может быть сам себе родственником");
 			}
 		}
 
-		private void NotGrandparent(Persona person)
-		{
-
-			if (CheckingВuplicates(Grandparents.Persona, person))
-			{
-				throw new Exception($"Нарушение родственных связей, {person.Name} уже является Дедушко/Бабушкой");
-			}
-		}
-
-		private void NotBrotherAndSister(Persona person)
-		{
-			if (CheckingВuplicates(BrotherAndSister.Persona, person))
-			{
-				throw new Exception($"Нарушение родственных связей, {person.Name} уже является Братом/Сестрой");
-			}
-		}
-
-		private void NotGrandchildren(Persona person)
-		{
-			if (CheckingВuplicates(Grandchildren.Persona, person))
-			{
-				throw new Exception($"Нарушение родственных связей, {person.Name} уже является Внуком/Внучкой");
-			}
-		}
-
-		private void NotChildren(Persona person)
-		{
-			if (CheckingВuplicates(Children.Persona, person))
-			{
-				throw new Exception($"Нарушение родственных связей, {person.Name} уже является ребенком");
-			}
-		}
 		private bool CheckingВuplicates(List<Persona> list, Persona person)
 		{
 			foreach (var item in list)

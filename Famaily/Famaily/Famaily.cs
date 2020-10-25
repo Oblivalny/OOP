@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,11 +9,16 @@ namespace Famaily
 {
 	public class Famaily
 	{
-		public List<Persona> Persona { get; }
+		private List<Persona> Persona; 
 
 		public Famaily()
 		{
 			Persona = new List<Persona>();
+		}
+
+		public List<Persona> GetPersona()
+		{
+			return Persona;
 		}
 
 
@@ -23,6 +29,7 @@ namespace Famaily
 				throw new Exception($"Дублирование родства, {person.Name} уже является родствеником");
 			}
 		}
+
 
 		public void AddRelative(Persona person)
 		{
