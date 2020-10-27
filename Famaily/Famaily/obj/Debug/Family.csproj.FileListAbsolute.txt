@@ -1,0 +1,7 @@
+C:\Users\rfrep\Documents\OOP\Famaily\Famaily\bin\Debug\Famaily.exe.config
+C:\Users\rfrep\Documents\OOP\Famaily\Famaily\bin\Debug\Famaily.exe
+C:\Users\rfrep\Documents\OOP\Famaily\Famaily\bin\Debug\Famaily.pdb
+C:\Users\rfrep\Documents\OOP\Famaily\Famaily\obj\Debug\Family.csprojAssemblyReference.cache
+C:\Users\rfrep\Documents\OOP\Famaily\Famaily\obj\Debug\Family.csproj.CoreCompileInputs.cache
+C:\Users\rfrep\Documents\OOP\Famaily\Famaily\obj\Debug\Famaily.exe
+C:\Users\rfrep\Documents\OOP\Famaily\Famaily\obj\Debug\Famaily.pdb

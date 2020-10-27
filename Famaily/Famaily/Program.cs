@@ -1,10 +1,11 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Famaily
+namespace Family
 {
 	class Program
 	{
@@ -27,6 +28,7 @@ namespace Famaily
 			var saha = new Persona("Saha");
 			var nik = new Persona("Nik");
 			var julia = new Persona("Julia");
+			var stas = new Persona("Stas");
 
 
 
@@ -48,10 +50,12 @@ namespace Famaily
 			saha.SetParent(vera);
 
 
-			// Семья #3 установка связей
-			nik.SetPartner(saha);
-			julia.SetParent(nik);
-			julia.SetParent(saha);
+            // Семья #3 установка связей
+            nik.SetPartner(saha);
+            julia.SetParent(nik);
+            julia.SetParent(saha);
+			stas.SetParent(nik);
+			stas.SetParent(saha);
 
 
 			// Проверка: Корректных связей родства 

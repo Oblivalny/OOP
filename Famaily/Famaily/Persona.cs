@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Famaily
+namespace Family
 {
 	public class Persona
 	{
 		public string Name { get; }
 
 		private Persona Partner;
-		private Famaily Parents;
-		private Famaily Children;
+		private Family Parents;
+		private Family Children;
 
 		public Persona(string name)
 		{
 			Name = name;
-			Parents = new Famaily();
-			Children = new Famaily();
+			Parents = new Family();
+			Children = new Family();
 		}
 
 
@@ -26,6 +27,19 @@ namespace Famaily
 		public void SetPartner(Persona partner)
 		{
 			CheckingNotSelfKinship(partner);
+
+
+			//При создании новой связи между партнерами удаляются старые связи обоих партнеров
+			if (this.Partner != null)
+			{
+				this.Partner.Partner = null;
+			}
+
+			if (partner.Partner != null)
+            {
+				partner.Partner.Partner = null;
+			}
+
 
 			Partner = partner;
             partner.Partner = this;
@@ -53,7 +67,7 @@ namespace Famaily
 		private void CheckingViolationOfFamilyTiesUp(Persona parent, Persona child)
 		{
 
-			if (CheckingВuplicates(parent.GetParent(), child))
+			if (CheckDuplicates(parent.GetParent(), child))
 			{
 				throw new Exception($"Нарушение родственных связей, {child.Name} уже является родителем {parent.Name}");
 			}
@@ -69,7 +83,7 @@ namespace Famaily
 		private void CheckingViolationOfFamilyTiesDown(Persona parent, Persona child)
 		{
 
-			if (CheckingВuplicates(parent.GetChildren(), child))
+			if (CheckDuplicates(parent.GetChildren(), child))
 			{
 				throw new Exception($"Нарушение родственных связей, {parent.Name} уже является родителем {child.Name}");
 			}
@@ -84,10 +98,14 @@ namespace Famaily
 		{
 			var names = " ";
 
-			foreach (var person in persons)
-			{
-				names += person.Name + ",";
-			}
+			if (persons != null)
+            {
+                foreach (var person in persons)
+                {
+                    names += person.Name + ",";
+                }
+            }
+			
 			return names;
 		}
 
@@ -110,30 +128,12 @@ namespace Famaily
 
 		public List<Persona> GetGrandparents()
 		{
-			List<Persona> grandparents = new List<Persona>();
-			foreach (var parent in this.GetParent())
-			{
-				foreach (var grandparent in parent.GetParent())
-				{
-					grandparents.Add(grandparent);
-				}
-			}
-			return grandparents;
+			return this.GetParent().SelectMany(parent => parent.GetParent()).ToList();
 		}
 
 		public List<Persona> GetGrandchildren()
 		{
-			List<Persona> grandchildren = new List<Persona>();
-
-			foreach (var child in this.GetChildren())
-			{
-				foreach (var grandchild in child.GetChildren())
-				{
-					grandchildren.Add(grandchild);
-				}
-			}
-
-			return grandchildren;
+			return this.GetChildren().SelectMany(child => child.GetChildren()).ToList();
 		}
 
 		public List<Persona> GetBrotherAndSister()
@@ -148,7 +148,6 @@ namespace Famaily
 					{
 						brotherAndSister.Add(child);
 					}
-
 				}
 			}
 
@@ -160,18 +159,21 @@ namespace Famaily
 
             List<Persona> auntAndUncles = new List<Persona>();
 
-
-            foreach (var grentperent in this.GetGrandparents())
+            foreach (var grendperent in this.GetGrandparents())
             {
                
-                foreach (var auntAndUncle in grentperent.GetChildren())
+                foreach (var auntAndUncle in grendperent.GetChildren())
                 {
-					if ((CheckingВuplicates(this.GetParent(), auntAndUncle) == false) 
-						&(CheckingВuplicates(auntAndUncles, auntAndUncle) == false))
+					if ((CheckDuplicates(this.GetParent(), auntAndUncle) == false) 
+						&(CheckDuplicates(auntAndUncles, auntAndUncle) == false))
 
 					{
 						auntAndUncles.Add(auntAndUncle);
-						auntAndUncles.Add(auntAndUncle.GetPartner());
+
+						if( auntAndUncle.GetPartner() != null)
+                        {
+							auntAndUncles.Add(auntAndUncle.GetPartner());
+						}
 					}
                 }
             }
@@ -184,13 +186,12 @@ namespace Famaily
 		{
 			List<Persona> cousins = new List<Persona>();
 
-
 			foreach (var auntAndUncle in this.GetAuntAndUncle())
 			{
 
 				foreach (var child in auntAndUncle.GetChildren())
 				{
-					if (CheckingВuplicates(cousins, child) == false)
+					if ((CheckDuplicates(cousins, child) == false)&(child != this))
 					{
 						cousins.Add(child);
 					}
@@ -203,7 +204,12 @@ namespace Famaily
 
 		public List<Persona> GetLaws()
         {
-			return this.GetPartner().GetParent();
+			if (this.GetPartner() != null)
+			{
+				return this.GetPartner().GetParent();
+			}
+
+			return null;
 		}
 
 
@@ -216,16 +222,9 @@ namespace Famaily
 			}
 		}
 
-		private bool CheckingВuplicates(List<Persona> list, Persona person)
+		private bool CheckDuplicates(List<Persona> list, Persona person)
 		{
-			foreach (var item in list)
-			{
-				if (item == person)
-				{
-					return true;
-				}
-			}
-			return false;
+			return list.Any(item => item == person);
 		}
 
 	}

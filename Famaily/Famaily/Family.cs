@@ -5,26 +5,33 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Famaily
+namespace Family
 {
-	public class Famaily
+	public class Family
 	{
 		private List<Persona> Persona; 
 
-		public Famaily()
+		public Family()
 		{
 			Persona = new List<Persona>();
 		}
 
 		public List<Persona> GetPersona()
 		{
-			return Persona;
+			Family clone = Clone();
+
+			return clone.Persona;
 		}
 
+		private Family Clone()
+        {
+			Family clone = new Family { Persona = this.Persona};
+			return clone;
+		}
 
 		private void DuplicationPersona(Persona person)
 		{
-			if (CheckingВuplicates(Persona, person))
+			if (CheckDuplicates(Persona, person))
 			{
 				throw new Exception($"Дублирование родства, {person.Name} уже является родствеником");
 			}
@@ -48,16 +55,9 @@ namespace Famaily
 			return names;
 		}
 
-		private bool CheckingВuplicates(List<Persona> list, Persona person)
+		private bool CheckDuplicates(List<Persona> list, Persona person)
 		{
-			foreach (var item in list)
-			{
-				if (item == person)
-				{
-					return true;
-				}
-			}
-			return false;
+			return list.Any(item => item == person);
 		}
 	}
 }

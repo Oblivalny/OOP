@@ -1,0 +1,13 @@
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\bin\Debug\netcoreapp3.1\Online_bookstore.exe
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\bin\Debug\netcoreapp3.1\Online_bookstore.deps.json
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\bin\Debug\netcoreapp3.1\Online_bookstore.runtimeconfig.json
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\bin\Debug\netcoreapp3.1\Online_bookstore.runtimeconfig.dev.json
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\bin\Debug\netcoreapp3.1\Online_bookstore.dll
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\bin\Debug\netcoreapp3.1\Online_bookstore.pdb
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\obj\Debug\netcoreapp3.1\Online_bookstore.csprojAssemblyReference.cache
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\obj\Debug\netcoreapp3.1\Online_bookstore.AssemblyInfoInputs.cache
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\obj\Debug\netcoreapp3.1\Online_bookstore.AssemblyInfo.cs
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\obj\Debug\netcoreapp3.1\Online_bookstore.csproj.CoreCompileInputs.cache
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\obj\Debug\netcoreapp3.1\Online_bookstore.dll
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\obj\Debug\netcoreapp3.1\Online_bookstore.pdb
+C:\Users\rfrep\Documents\OOP\Online_bookstore\Online_bookstore\obj\Debug\netcoreapp3.1\Online_bookstore.genruntimeconfig.cache
