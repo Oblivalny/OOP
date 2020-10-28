@@ -49,7 +49,15 @@ namespace Family
 		public void SetParent(Persona parent)
 		{
 			CheckingNotSelfKinship(parent);
+
+
+			//Проверка на кол-во родителей
+            if (this.GetParent().Count>1)
+            {
+				throw new Exception($"Нарушение родственных связей, у {this.Name} уже есть родители");
+			}
 			CheckingViolationOfFamilyTiesUp(parent, this);
+			CheckingViolationOfFamilyTiesDown(parent, this);
 
 			Parents.AddRelative(parent);
 			parent.SetChilren(this);
@@ -59,6 +67,7 @@ namespace Family
 		{
 			CheckingNotSelfKinship(child);
 			CheckingViolationOfFamilyTiesUp(this, child);
+			CheckingViolationOfFamilyTiesDown(this, child);
 			Children.AddRelative(child);
 			//child.Parents.AddRelative(this);
 		}
@@ -76,8 +85,6 @@ namespace Family
 			{
 				CheckingViolationOfFamilyTiesUp(grandparent, child);
 			}
-
-			CheckingViolationOfFamilyTiesDown(parent, child);
 		}
 
 		private void CheckingViolationOfFamilyTiesDown(Persona parent, Persona child)
@@ -140,7 +147,7 @@ namespace Family
 		{
 			List<Persona> brotherAndSister = new List<Persona>();
 
-			if (this.GetParent().Count() >0)
+			if (this.GetParent().Count()>0)
 			{
 				foreach (var child in this.GetParent().First().GetChildren())
 				{
@@ -191,7 +198,7 @@ namespace Family
 
 				foreach (var child in auntAndUncle.GetChildren())
 				{
-					if ((CheckDuplicates(cousins, child) == false)&(child != this))
+					if ((CheckDuplicates(cousins, child) == false)&&(child != this))
 					{
 						cousins.Add(child);
 					}

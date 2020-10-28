@@ -25,7 +25,8 @@ namespace Family
 
 		private Family Clone()
         {
-			Family clone = new Family { Persona = this.Persona};
+			List<Persona> persona = new List<Persona>(this.Persona);
+			Family clone = new Family {Persona = persona};
 			return clone;
 		}
 

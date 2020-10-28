@@ -52,9 +52,9 @@ namespace Family
 
             // Семья #3 установка связей
             nik.SetPartner(saha);
-            julia.SetParent(nik);
+            //julia.SetParent(nik);
             julia.SetParent(saha);
-			stas.SetParent(nik);
+            stas.SetParent(nik);
 			stas.SetParent(saha);
 
 
@@ -62,6 +62,7 @@ namespace Family
 			//saha.SetChilren(ivan);
 			//ivan.SetParent(maha);
 			//ivan.SetParent(oleg);
+			
 
 
 			//Родителей
