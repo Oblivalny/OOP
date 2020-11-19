@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Online_bookstore.Delivery
 {
-    interface IDelivery
+    public interface IDelivery
     {
-        public int GetPriceDelivery();
-       
+        int PriceDelivery { get; }
     }
 }

@@ -1,112 +1,108 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Online_bookstore.Delivery;
+using System.Linq;
+using Online_bookstore.Discount;
 using Online_bookstore.Products;
-using Online_bookstore.PromoСode;
 
 namespace Online_bookstore.Basket
 {
-
-    class BasketGoods : IDelivery
+    public class BasketGoods : IBasket
     {
-        private List<IProducts> listProducts;
-        private List<IDiscount> listPromoСode;
+        private readonly List<IProduct> _products;
+        private readonly List<IDiscount> _promoCodes;
+        public int Subtotal { get; private set; }
+        public int Discount { get; private set; }
+        public int PriceDelivery { get; private set; }
+        public int Total => Subtotal - Discount + PriceDelivery;
+        public int NumberProducts => _products.Count;
 
-        public void AddProduct(IProducts product)
+        public BasketGoods()
         {
-            this.listProducts.Add(product);
+            _products = new List<IProduct>();
+            _promoCodes = new List<IDiscount>();
+            Subtotal = 0;
+            Discount = 0;
+            PriceDelivery = 0;
         }
 
-        public List<IProducts> GetProducts()
+        public IEnumerable<IProduct> GetProducts()
         {
-            return this.listProducts;
+            return _products.ToList();
         }
 
-        public List<IProducts> GetProducts(string type)
+        public void AddProduct(IProduct product)
         {
-
-            List<IProducts> listSelectProducts = new List<IProducts>();
-
-            foreach (var product in listProducts)
+            _products.Add(product);
+            Subtotal += product.Price;
+            DiscountUpdate();
+            if (product.IsDeliveryPossible)
             {
-                if (product.GetType() == type)
-                {
-                    listSelectProducts.Add(product);
-                }
-                
+                PriceDeliveryUpdate();
             }
-
-            return listSelectProducts;
         }
 
-
-        public void AddPromoСode(IDiscount promoСode)
+        public void RemoveProduct(IProduct product)
         {
-            this.listPromoСode.Add(promoСode);
+            if (!_products.Contains(product))
+            {
+                throw new ArgumentException("This product not found!");
+            }
+            _products.Remove(product);
+            Subtotal -= product.Price;
+            DiscountUpdate();
+            if (product.IsDeliveryPossible)
+            {
+                PriceDeliveryUpdate();
+            }
         }
 
-        public int GetPriceProducts()
+        public void AddPromoCode(IDiscount discount)
         {
-            int price = 0;
-
-            foreach (var product in this.listProducts)
+            if (!_promoCodes.Contains(discount))
             {
-                price += product.GetPrice();
+                _promoCodes.Add(discount);
             }
-
-            return price;
+            if (_products.Count > 0)
+            {
+                DiscountUpdate();
+                PriceDeliveryUpdate();
+            }
         }
 
-        public int GetPriceDelivery()
+        public void RemovePromoCode(IDiscount discount)
         {
-            int priseDelivery = 200;
-            int freePrise = 1000;
-
-            int price = 0;
-
-            foreach (var product in this.listProducts)
+            if (!_promoCodes.Contains(discount))
             {
-                if (product.IsDelivery())
-                {
-                    price += product.GetPrice();
-                }
+                throw new ArgumentException("This promo code not found!");
             }
-
-            if (price>= freePrise)
+            _promoCodes.Remove(discount);
+            if (_products.Count > 0)
             {
-                return 0;
+                DiscountUpdate();
+                PriceDeliveryUpdate();
             }
-
-            return priseDelivery;
         }
 
-        public int GetSumDiscountWithPromoСode()
+        public void PrintTotal()
         {
-            int discount = 0;
-
-            foreach (var promoСode in this.listPromoСode)
-            {
-                discount += promoСode.GetDiscount(this);
-            }
-
-            return discount;
+            Console.WriteLine($"Subtotal: {Subtotal}");
+            Console.WriteLine($"PriceDelivery: {PriceDelivery}");
+            Console.WriteLine($"Discount: {Discount}");
+            Console.WriteLine($"Total: {Total}");
         }
 
-
-        public int GetSumDiscountWithStock()
+        private void DiscountUpdate()
         {
-            int discount = 0;
-
-            foreach (var promoСode in this.listPromoСode)
-            {
-                discount += promoСode.GetDiscount(this);
-            }
-
-            return discount;
+            Discount = _promoCodes.Sum(promoCode => promoCode.GetDiscount(this));
         }
 
-
+        private void PriceDeliveryUpdate()
+        {
+            if (_products.Count(product => !product.IsDeliveryPossible) == _products.Count)
+            {
+                PriceDelivery = 0;
+            }
+            PriceDelivery = Subtotal - Discount >= 1000 ? 0 : 200;
+        }
     }
 }
-

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Online_bookstore.Products;
 using Online_bookstore.Basket;
 
-namespace Online_bookstore.PromoСode
+namespace Online_bookstore.Discount
 {
-    interface IDiscount
+    public interface IDiscount
     {
-        public int GetDiscount(BasketGoods basket);
+        int GetDiscount(IBasket basket);
     }
 }
