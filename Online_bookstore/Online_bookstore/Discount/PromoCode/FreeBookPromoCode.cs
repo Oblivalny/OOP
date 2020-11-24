@@ -1,11 +1,9 @@
 using System;
-using System.Linq;
-using Online_bookstore.Basket;
 using Online_bookstore.Products;
 
 namespace Online_bookstore.Discount.PromoCode
 {
-    public class FreeBookPromoCode : IDiscount
+    public class FreeBookPromoCode : IPromoCode, IProductDiscount
     {
         public IProduct Product { get; }
 
@@ -14,11 +12,9 @@ namespace Online_bookstore.Discount.PromoCode
             Product = product;
         }
 
-        public int GetDiscount(IBasket basket)
+        public int GetDiscount(IProduct product)
         {
-            return basket.GetProducts()
-                         .Where(product => Product.Equals(product))
-                         .Sum(product => product.Price);
+            return product.Equals(Product) ? product.Price : 0;
         }
 
         public override bool Equals(object obj)

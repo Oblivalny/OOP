@@ -1,11 +1,9 @@
 using System;
-using System.Linq;
-using Online_bookstore.Basket;
 using Online_bookstore.Products;
 
 namespace Online_bookstore.Discount.PromoCode
 {
-    public class PercentageDiscountPromoCode : IDiscount
+    public class PercentageDiscountPromoCode : IPromoCode, IProductDiscount
     {
         public IProduct Product { get; }
         public int PercentageDiscount { get; }
@@ -14,17 +12,16 @@ namespace Online_bookstore.Discount.PromoCode
         {
             if (percentageDiscount < 0 || percentageDiscount > 100)
             {
-                throw new ArgumentException("The percentageDiscount parameter ranges from 0 to 100");
+                throw new ArgumentException("The parameter percentageDiscount ranges from 0 to 100");
             }
             Product = product;
             PercentageDiscount = percentageDiscount;
         }
 
-        public int GetDiscount(IBasket basket)
+        public int GetDiscount(IProduct product)
         {
-            return basket.GetProducts()
-                         .Where(product => product.Equals(Product))
-                         .Sum(product => product.Price * PercentageDiscount / 100);
+            var discount = product.Price * PercentageDiscount / 100;
+            return product.Equals(Product) ? discount : 0;
         }
 
         public override bool Equals(object obj)

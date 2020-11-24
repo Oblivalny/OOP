@@ -3,8 +3,10 @@
     "",
     "\\Online_bookstore",
     "\\Online_bookstore\\Online_bookstore",
+    "\\Online_bookstore\\Online_bookstore\\Basket",
+    "\\Online_bookstore\\Online_bookstore\\Delivery",
     "\\Online_bookstore\\Online_bookstore\\Products"
   ],
-  "SelectedNode": "\\Online_bookstore",
+  "SelectedNode": "\\Online_bookstore\\Online_bookstore\\Program.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -1,26 +1,26 @@
 using System;
-using System.Linq;
-using Online_bookstore.Basket;
 using Online_bookstore.Products;
 
 namespace Online_bookstore.Discount.PromoCode
 {
-    public class AbsoluteDiscountPromoCode : IDiscount
+    public class AbsoluteDiscountPromoCode : IPromoCode, IProductDiscount
     {
         public IProduct Product { get; }
         public int Discount { get; }
 
         public AbsoluteDiscountPromoCode(IProduct product, int discount)
         {
+            if (Discount > product.Price || Discount < 0)
+            {
+                throw new ArgumentException("The parameter discount ranges from 0 to \"price\"");
+            }
             Product = product;
             Discount = discount;
         }
 
-        public int GetDiscount(IBasket basket)
+        public int GetDiscount(IProduct product)
         {
-            return basket.GetProducts()
-                         .Where(product => Product.Equals(product))
-                         .Sum(product => Discount);
+            return product.Equals(Product) ? Discount : 0;
         }
 
         public override bool Equals(object obj)
