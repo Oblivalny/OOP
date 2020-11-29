@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinarySearchTree", "BinarySearchTree\BinarySearchTree.csproj", "{8EFC13F6-A8DC-4547-9154-479123F91950}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{CED136B7-7D24-4E74-B61E-48166E2E8A51}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8EFC13F6-A8DC-4547-9154-479123F91950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EFC13F6-A8DC-4547-9154-479123F91950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EFC13F6-A8DC-4547-9154-479123F91950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EFC13F6-A8DC-4547-9154-479123F91950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CED136B7-7D24-4E74-B61E-48166E2E8A51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CED136B7-7D24-4E74-B61E-48166E2E8A51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CED136B7-7D24-4E74-B61E-48166E2E8A51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CED136B7-7D24-4E74-B61E-48166E2E8A51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
