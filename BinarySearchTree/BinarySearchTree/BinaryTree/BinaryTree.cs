@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BinarySearchTree.BinaryTree
 {
-    public class BinaryTree<TKey, TValue> : IDictionary<TKey, TValue>
+    public class BinaryTree<TKey, TValue> : IDictionary<TKey, TValue>, IFileActions
         where TKey : IComparable
     {
         private TreeNode<TKey, TValue> _root;
@@ -126,24 +127,42 @@ namespace BinarySearchTree.BinaryTree
             return false;
         }
 
-        public void Serialize(Stream serializationStream)
+        public void SaveToFile(string path)
         {
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            {
+                throw new DirectoryNotFoundException("Directory not found!");
+            }
             if (_root == null)
             {
                 return;
             }
-            var formatter = new BinaryFormatter();
-            formatter.Serialize(serializationStream, _root);
+            using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(fileStream, _root);
+            }
         }
 
-        public void Deserialize(Stream serializationStream)
+        public void RestoreFromFile(string path)
         {
-            var formatter = new BinaryFormatter();
-            var obj = formatter.Deserialize(serializationStream);
-            if (obj is TreeNode<TKey, TValue> root)
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
             {
-                _root = root;
-                Count = Keys.Count;
+                throw new DirectoryNotFoundException("Directory not found!");
+            }
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("File not found!");
+            }
+            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                var formatter = new BinaryFormatter();
+                var obj = formatter.Deserialize(fileStream);
+                if (obj is TreeNode<TKey, TValue> root)
+                {
+                    _root = root;
+                    Count = Keys.Count;
+                }
             }
         }
 
