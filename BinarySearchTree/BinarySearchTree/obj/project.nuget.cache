@@ -1,8 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "ls8AYkav4juK+/UP77ZGpfmELIAcT/A2IOWroCG7jqWRiLOULMAIe9J/1dSYL49LbHApjIBkCmRytYCTvJBlPw==",
+  "dgSpecHash": "Noy040lx8JdHF2dFFp4Y3JL6ilro6XUMyknYRFb4JR+x04EjW4/EH/0Ie1iQ6eTLBepOg033JZIvkq7xh1nn3Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\rfrep\\Documents\\OOP\\BinarySearchTree\\BinarySearchTree\\BinarySearchTree.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\rfrep\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
+    "C:\\Users\\rfrep\\.nuget\\packages\\system.io.abstractions\\13.2.4\\system.io.abstractions.13.2.4.nupkg.sha512",
+    "C:\\Users\\rfrep\\.nuget\\packages\\system.io.abstractions.testinghelpers\\13.2.4\\system.io.abstractions.testinghelpers.13.2.4.nupkg.sha512",
+    "C:\\Users\\rfrep\\.nuget\\packages\\system.io.filesystem.accesscontrol\\4.7.0\\system.io.filesystem.accesscontrol.4.7.0.nupkg.sha512",
+    "C:\\Users\\rfrep\\.nuget\\packages\\system.security.accesscontrol\\4.7.0\\system.security.accesscontrol.4.7.0.nupkg.sha512",
+    "C:\\Users\\rfrep\\.nuget\\packages\\system.security.principal.windows\\4.7.0\\system.security.principal.windows.4.7.0.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BinarySearchTree.BinaryTree
@@ -12,14 +12,16 @@ namespace BinarySearchTree.BinaryTree
         where TKey : IComparable
     {
         private TreeNode<TKey, TValue> _root;
+        private readonly IFileSystem _fileSystem;
         public int Count { get; private set; }
         public bool IsReadOnly => false;
         public ICollection<TKey> Keys => this.Select(node => node.Key).ToList();
         public ICollection<TValue> Values => this.Select(node => node.Value).ToList();
 
-        public BinaryTree()
+        public BinaryTree(IFileSystem fileSystem = null)
         {
             Count = 0;
+            _fileSystem = fileSystem ?? new FileSystem();
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
@@ -129,7 +131,7 @@ namespace BinarySearchTree.BinaryTree
 
         public void SaveToFile(string path)
         {
-            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            if (!_fileSystem.Directory.Exists(Path.GetDirectoryName(path)))
             {
                 throw new DirectoryNotFoundException("Directory not found!");
             }
@@ -137,7 +139,7 @@ namespace BinarySearchTree.BinaryTree
             {
                 return;
             }
-            using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var fileStream = _fileSystem.FileStream.Create(path, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(fileStream, _root);
@@ -146,15 +148,15 @@ namespace BinarySearchTree.BinaryTree
 
         public void RestoreFromFile(string path)
         {
-            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            if (!_fileSystem.Directory.Exists(Path.GetDirectoryName(path)))
             {
                 throw new DirectoryNotFoundException("Directory not found!");
             }
-            if (!File.Exists(path))
+            if (!_fileSystem.File.Exists(path))
             {
                 throw new FileNotFoundException("File not found!");
             }
-            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var fileStream = _fileSystem.FileStream.Create(path, FileMode.Open, FileAccess.Read))
             {
                 var formatter = new BinaryFormatter();
                 var obj = formatter.Deserialize(fileStream);

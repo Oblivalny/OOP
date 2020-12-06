@@ -37,6 +37,16 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "dependencies": {
+            "System.IO.Abstractions": {
+              "target": "Package",
+              "version": "[13.2.4, )"
+            },
+            "System.IO.Abstractions.TestingHelpers": {
+              "target": "Package",
+              "version": "[13.2.4, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

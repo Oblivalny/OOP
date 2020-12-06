@@ -1,5 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
 using System.Runtime.Serialization;
 using BinarySearchTree.BinaryTree;
@@ -10,14 +11,14 @@ namespace TestProject.SavingRestoringTests
     [TestFixture]
     public class SavingRestoringTests
     {
-        private readonly string _projectPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
-        private const string CurrentDirectoryName = "SavingRestoringTests";
+        private const string FileName = "tree";
 
         [Test]
         public void SaveToNonExistsDirectoryTest()
         {
-            var tree = new BinaryTree<int, int>();
-            var path = _projectPath + _projectPath;
+            var fileSystem = new MockFileSystem();
+            var path = GetNonExistsDirectory(fileSystem);
+            var tree = new BinaryTree<int, int>(fileSystem);
             var testDelegate = new TestDelegate(() => tree.SaveToFile(path));
             Assert.Throws<DirectoryNotFoundException>(testDelegate);
         }
@@ -25,17 +26,28 @@ namespace TestProject.SavingRestoringTests
         [Test]
         public void RestoreFromNonExistsDirectoryTest()
         {
+            var fileSystem = new MockFileSystem();
+            var path = GetNonExistsDirectory(fileSystem);
             var tree = new BinaryTree<int, int>();
-            var path = _projectPath + _projectPath;
             var testDelegate = new TestDelegate(() => tree.RestoreFromFile(path));
             Assert.Throws<DirectoryNotFoundException>(testDelegate);
+        }
+
+        private string GetNonExistsDirectory(IMockFileDataAccessor fileSystem)
+        {
+            var dir = fileSystem.AllDirectories.FirstOrDefault();
+            var nonExistsDir = Path.GetRandomFileName();
+            var path = Path.Combine(dir, nonExistsDir, FileName);
+            return path;
         }
 
         [Test]
         public void RestoreFromNonExistsFileTest()
         {
-            var tree = new BinaryTree<int, int>();
-            var path = Path.Combine(_projectPath, Path.GetRandomFileName());
+            var fileSystem = new MockFileSystem();
+            var dir = fileSystem.AllDirectories.FirstOrDefault();
+            var path = Path.Combine(dir, FileName);
+            var tree = new BinaryTree<int, int>(fileSystem);
             var testDelegate = new TestDelegate(() => tree.RestoreFromFile(path));
             Assert.Throws<FileNotFoundException>(testDelegate);
         }
@@ -43,19 +55,13 @@ namespace TestProject.SavingRestoringTests
         [Test]
         public void RestoreFromEmptyFile()
         {
-            var tree = new BinaryTree<int, int>();
-            var fileName = Path.GetRandomFileName();
-            var path = Path.Combine(_projectPath, CurrentDirectoryName, fileName);
+            var fileSystem = new MockFileSystem();
+            var dir = fileSystem.AllDirectories.FirstOrDefault();
+            var path = Path.Combine(dir, FileName);
+            fileSystem.AddFile(path, string.Empty);
+            var tree = new BinaryTree<int, int>(fileSystem);
             var testDelegate = new TestDelegate(() => tree.RestoreFromFile(path));
-            using (var file = File.Create(path)) { }
-            try
-            {
-                Assert.Throws<SerializationException>(testDelegate);
-            }
-            finally
-            {
-                File.Delete(path);
-            }
+            Assert.Throws<SerializationException>(testDelegate);
         }
 
         [Test]
@@ -78,23 +84,24 @@ namespace TestProject.SavingRestoringTests
 
         private void SavingRestoringTree(int count)
         {
-            var filePath = Path.Combine(_projectPath, CurrentDirectoryName, Path.GetRandomFileName());
-            var tree = GetFilledTree(count);
+            var fileSystem = new MockFileSystem();
+            var dir = fileSystem.AllDirectories.FirstOrDefault();
+            var path = Path.Combine(dir, FileName);
+            var tree = GetFilledTree(count, fileSystem);
             var copyOfTree = new BinaryTree<int, int>();
             foreach (var item in tree)
             {
                 copyOfTree.Add(item);
             }
-            tree.SaveToFile(filePath);
+            tree.SaveToFile(path);
             tree.Clear();
-            tree.RestoreFromFile(filePath);
-            File.Delete(filePath);
+            tree.RestoreFromFile(path);
             Assert.AreEqual(copyOfTree, tree);
         }
 
-        private BinaryTree<int, int> GetFilledTree(int count)
+        private BinaryTree<int, int> GetFilledTree(int count, IFileSystem fileSystem)
         {
-            var tree = new BinaryTree<int, int>();
+            var tree = new BinaryTree<int, int>(fileSystem);
             foreach (var key in Enumerable.Range(0, count))
             {
                 tree.Add(key, default);
